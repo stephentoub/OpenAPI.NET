@@ -5,7 +5,8 @@
     /// </summary>
     public class OpenApiWriterSettings
     {
-        internal LoopDetector LoopDetector { get; } = new();
+        internal LoopDetector? LoopDetector { get; set; }
+
         /// <summary>
         /// Indicates if local references should be rendered as an inline object
         /// </summary>

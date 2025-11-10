@@ -17,7 +17,7 @@ namespace Microsoft.OpenApi
         /// <param name="stream"></param>
         /// <param name="formatProvider"></param>
         public FormattingStreamWriter(Stream stream, IFormatProvider formatProvider)
-            : base(stream)
+            : base(stream, System.Text.Encoding.UTF8, 1)
         {
             _formatProvider = formatProvider;
         }

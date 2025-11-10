@@ -247,7 +247,7 @@ namespace Microsoft.OpenApi
                 callback);
 
             // tags
-            writer.WriteOptionalCollection(OpenApiConstants.Tags, Tags, (w, t) => callback(w, t));
+            writer.WriteOptionalCollection(OpenApiConstants.Tags, Tags, static (w, t, callback) => callback(w, t), callback);
 
             // external docs
             writer.WriteOptionalObject(OpenApiConstants.ExternalDocs, ExternalDocs, callback);
@@ -281,9 +281,9 @@ namespace Microsoft.OpenApi
             // however if they have cycles, then we will need a component rendered
             if (writer.GetSettings().InlineLocalReferences)
             {
-                var loops = writer.GetSettings().LoopDetector.Loops;
+                var loops = writer.GetSettings().LoopDetector?.Loops;
 
-                if (loops.TryGetValue(typeof(IOpenApiSchema), out var schemas))
+                if (loops?.TryGetValue(typeof(IOpenApiSchema), out var schemas) is true)
                 {
                     var openApiSchemas = schemas.Cast<IOpenApiSchema>()
                         .Distinct()

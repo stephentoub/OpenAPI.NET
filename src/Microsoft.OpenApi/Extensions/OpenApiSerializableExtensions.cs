@@ -3,6 +3,7 @@
 
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -182,14 +183,8 @@ namespace Microsoft.OpenApi
 
             using var stream = new MemoryStream();
             await element.SerializeAsync(stream, specVersion, format, cancellationToken).ConfigureAwait(false);
-            stream.Position = 0;
 
-            using var streamReader = new StreamReader(stream);
-#if NET7_0_OR_GREATER
-            return await streamReader.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
-#else
-            return await streamReader.ReadToEndAsync().ConfigureAwait(false);
-#endif
+            return Encoding.UTF8.GetString(stream.GetBuffer(), 0, (int)stream.Length);
         }
     }
 }

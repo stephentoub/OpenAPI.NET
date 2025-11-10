@@ -187,17 +187,21 @@ namespace Microsoft.OpenApi
                 action(writer, Reference);
             }
             // If Loop is detected then just Serialize as a reference.
-            else if (!writer.GetSettings().LoopDetector.PushLoop<IOpenApiSchema>(this))
-            {
-                writer.GetSettings().LoopDetector.SaveLoop<IOpenApiSchema>(this);
-                action(writer, Reference);
-            }
             else
             {
-                SerializeInternal(writer, (w, element) => action(w, element));
-                writer.GetSettings().LoopDetector.PopLoop<IOpenApiSchema>();
+                var settings = writer.GetSettings();
+                settings.LoopDetector ??= new();
+                if (!settings.LoopDetector.PushLoop<IOpenApiSchema>(this))
+                {
+                    settings.LoopDetector.SaveLoop<IOpenApiSchema>(this);
+                    action(writer, Reference);
+                }
+                else
+                {
+                    SerializeInternal(writer, (w, element) => action(w, element));
+                    settings.LoopDetector.PopLoop<IOpenApiSchema>();
+                }
             }
-
         }
         /// <inheritdoc/>
         public override IOpenApiSchema CopyReferenceAsTargetElementWithOverrides(IOpenApiSchema source)

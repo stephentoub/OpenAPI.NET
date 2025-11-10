@@ -216,7 +216,30 @@ namespace Microsoft.OpenApi
                 writer.WriteCollectionInternal(name, elements, action);
             }
         }
-        
+
+        /// <summary>
+        /// Write the optional Open API object/element collection.
+        /// </summary>
+        /// <typeparam name="T">The Open API element type. <see cref="IOpenApiElement"/></typeparam>
+        /// <typeparam name="TState">State to pass through to <paramref name="action"/>.</typeparam>
+        /// <param name="writer">The Open API writer.</param>
+        /// <param name="name">The property name.</param>
+        /// <param name="elements">The collection values.</param>
+        /// <param name="action">The collection element writer action.</param>
+        /// <param name="state">The state to pass through to action.</param>
+        public static void WriteOptionalCollection<T, TState>(
+            this IOpenApiWriter writer,
+            string name,
+            IEnumerable<T>? elements,
+            Action<IOpenApiWriter, T, TState> action,
+            TState state)
+        {
+            if (elements != null && elements.Any())
+            {
+                writer.WriteCollectionInternal(name, elements, action, state);
+            }
+        }
+
         /// <summary>
         /// Write the optional or empty Open API object/element collection.
         /// </summary>
@@ -434,7 +457,36 @@ namespace Microsoft.OpenApi
 
             writer.WriteEndArray();
         }
-        
+
+        private static void WriteCollectionInternal<T, TState>(
+            this IOpenApiWriter writer,
+            string name,
+            IEnumerable<T> elements,
+            Action<IOpenApiWriter, T, TState> action,
+            TState state)
+        {
+            Utils.CheckArgumentNull(action);
+
+            writer.WritePropertyName(name);
+            writer.WriteStartArray();
+            if (elements != null)
+            {
+                foreach (var item in elements)
+                {
+                    if (item != null)
+                    {
+                        action(writer, item, state);
+                    }
+                    else
+                    {
+                        writer.WriteNull();
+                    }
+                }
+            }
+
+            writer.WriteEndArray();
+        }
+
         private static void WriteMapInternal<T>(
             this IOpenApiWriter writer,
             string name,

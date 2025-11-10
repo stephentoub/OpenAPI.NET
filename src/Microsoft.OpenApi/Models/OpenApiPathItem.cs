@@ -136,10 +136,19 @@ namespace Microsoft.OpenApi
             {
                 foreach (var operation in Operations)
                 {
-                    writer.WriteOptionalObject(
-                    operation.Key.Method.ToLowerInvariant(),
-                    operation.Value,
-                    callback);
+                    string method = operation.Key.Method switch
+                    {
+                        "GET" => "get",
+                        "POST" => "post",
+                        "PUT" => "put",
+                        "HEAD" => "head",
+                        "QUERY" => "query",
+                        "CONNECT" => "connect",
+                        "DELETE" => "delete",
+                        _ => operation.Key.Method.ToLowerInvariant(),
+                    };
+
+                    writer.WriteOptionalObject(method, operation.Value, callback);
                 }
             }
 

@@ -175,7 +175,7 @@ namespace Microsoft.OpenApi
         /// Handles control characters and backslashes and adds double quotes
         /// to get JSON-compatible string.
         /// </summary>
-        internal static string GetJsonCompatibleString(this string value)
+        internal static string GetJsonCompatibleStringNoQuotes(this string value)
         {
             if (value == null)
             {
@@ -186,15 +186,13 @@ namespace Microsoft.OpenApi
             // http://json.org/
 
             // Replace the backslash first, so that the new backslashes created by other Replaces are not duplicated.
-            value = value.Replace("\\", "\\\\")
+            return value.Replace("\\", "\\\\")
                 .Replace("\b", "\\b")
                 .Replace("\f", "\\f")
                 .Replace("\n", "\\n")
                 .Replace("\r", "\\r")
                 .Replace("\t", "\\t")
                 .Replace("\"", "\\\"");
-
-            return $"\"{value}\"";
         }
 
         internal static bool IsHexadecimalNotation(string input)

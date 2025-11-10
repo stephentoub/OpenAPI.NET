@@ -309,9 +309,9 @@ namespace Microsoft.OpenApi
 
         private void RenderComponents(IOpenApiWriter writer, Action<IOpenApiWriter, IOpenApiSerializable> callback, OpenApiSpecVersion version)
         {
-            var loops = writer.GetSettings().LoopDetector.Loops;
+            var loops = writer.GetSettings().LoopDetector?.Loops;
             writer.WriteStartObject();
-            if (loops.TryGetValue(typeof(OpenApiSchema), out _))
+            if (loops?.TryGetValue(typeof(OpenApiSchema), out _) is true)
             {
                 writer.WriteOptionalMap(OpenApiConstants.Schemas, Schemas, callback);
             }

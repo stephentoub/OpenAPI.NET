@@ -5,7 +5,7 @@ namespace Microsoft.OpenApi
 {
     internal class LoopDetector
     {
-        private readonly Dictionary<Type, Stack<object>> _loopStacks = new();
+        private Dictionary<Type, Stack<object>>? _loopStacks;
 
         /// <summary>
         /// Maintain history of traversals to avoid stack overflows from cycles
@@ -14,6 +14,8 @@ namespace Microsoft.OpenApi
         /// <returns>If method returns false a loop was detected and the key is not added.</returns>
         public bool PushLoop<T>(T key)
         {
+            _loopStacks ??= [];
+
             if (!_loopStacks.TryGetValue(typeof(T), out var stack))
             {
                 stack = new();
@@ -36,7 +38,7 @@ namespace Microsoft.OpenApi
         /// </summary>
         public void PopLoop<T>()
         {
-            if (_loopStacks[typeof(T)].Count > 0)
+            if (_loopStacks?[typeof(T)].Count > 0)
             {
                 _loopStacks[typeof(T)].Pop();
             }
@@ -54,17 +56,19 @@ namespace Microsoft.OpenApi
             }
         }
 
+        private Dictionary<Type, List<object>>? _loops;
+
         /// <summary>
         /// List of Loops detected
         /// </summary>
-        public Dictionary<Type, List<object>> Loops { get; } = new();
+        public Dictionary<Type, List<object>> Loops => _loops ??= [];
 
         /// <summary>
         /// Reset loop tracking stack
         /// </summary>
         internal void ClearLoop<T>()
         {
-            _loopStacks[typeof(T)].Clear();
+            _loopStacks?[typeof(T)].Clear();
         }
     }
 }

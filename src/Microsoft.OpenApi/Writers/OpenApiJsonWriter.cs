@@ -185,9 +185,9 @@ namespace Microsoft.OpenApi
 
             WriteIndentation();
 
-            name = name.GetJsonCompatibleString();
-
-            Writer.Write(name);
+            Writer.Write('"');
+            Writer.Write(name.GetJsonCompatibleStringNoQuotes());
+            Writer.Write('"');
 
             Writer.Write(WriterConstants.NameValueSeparator);
 
@@ -205,9 +205,9 @@ namespace Microsoft.OpenApi
         {
             WriteValueSeparator();
 
-            value = value.GetJsonCompatibleString();
-
-            Writer.Write(value);
+            Writer.Write('"');
+            Writer.Write(value.GetJsonCompatibleStringNoQuotes());
+            Writer.Write('"');
         }
 
         /// <summary>
